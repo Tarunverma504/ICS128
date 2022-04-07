@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" ></script>
+    <link rel="stylesheet" href="/index.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src ="scripts/cookie-manager.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light ">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><h1>Shop with me</h1><span style="color:grey">Beyond style yourself </span> </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+            <span class="navbar-text">
+              <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  onclick="viewCart()">View Cart</button>
+            </span>
+          </div>
+        </div>
+      </nav>
+  </div>  
+
+  <div  class="container">
+    <div class="row products-div"> </div>
+  </div>
+
+  <!-- cart -->
+  <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Shopping Cart</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <label style="width: 100%;">Currency </label>
+        <!-- <input type="text" placeholder="Canadian $" style="width: 100%;border: 1px solid grey;"/> -->
+        <select id="currency" style="width: 100%;border: 1px solid grey;" onchange="changeCurrency()">
+          
+          <option value="" default>Select Currency $</option>
+          <option value="cad">Canadian dollar $</option>
+          <option value="bzd">Belize dollar $</option>
+          <option value="usd">United States dollar $</option>
+        </select>
+        <div class="cart-status"> </div>
+
+      </div>
+      
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Success!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Your order was successfully placed!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog modal-lg  modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Checkout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div  id="menu">
+          <button class="btn btn-primary "   onclick="toggling(0)" ><i class="fa fa-solid fa-credit-card-front"> </i>&nbsp;Payment Method</button>
+          <button class="btn text-primary" onclick="toggling(1)" ><i class="fa fa-solid fa-address-card"></i>&nbsp;Billing Details</button>
+          <button class="btn text-primary" onclick="toggling(2)" ><i class="fa fa-solid fa-truck"></i>&nbsp;Shipping Details</button>
+          <button class="btn text-primary" onclick="toggling(3)" ><i class="fa fa-solid fa-badge-check"></i>&nbsp;Order Confirmation</button>
+        </div>
+        <br/>
+        <!-- Payment method    -->
+        <div id="menu-content">
+          <div class="payment-div active">
+            <h4>Payment Method</h4>
+            <form class="row g-3 needs-validation" novalidate onsubmit="paymentMethod(event)"> 
+              <div class="col-md-12">
+                <label for="cardNumber" class="form-label">Card Number</label>            
+                <input type="number" class="form-control" nputmode="numeric" id="cardNumber" pattern="[0-9\s]{13,19}"  maxlength="16" placeholder="xxxx xxxx xxxx xxxx"  required >
+                <div class="invalid-feedback">
+                  Invalid credit card # - MC/VISA/Accepted
+
+                </div>
+              </div>
+              <div class="col-md-4 ">
+                <label for="month" class="form-label">Expiration Date</label>
+                <input type="number" class="form-control" id="month"  placeholder="MM" required maxlength="2">
+                <div class="invalid-feedback">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="year" class="form-label">&nbsp;</label>
+                <!-- <input type="number" class="form-control" id="year"  placeholder="YYYY" required maxlength="4"> -->
+                <select id="year" class="form-control" style="width: 100%;border: 1px solid grey;" placeholder="YYYY" required>
+                  <option selected disabled value="">YYYY</option>
+
+                  <option value="2030">2030</option>
+                  <option value="2029">2029</option>
+                  <option value="2028">2028</option>
+                  <option value="2027">2027</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  
+                </select>
+                <div class="invalid-feedback">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label for="securityCode" class="form-label">Secutity Code</label>
+                <input type="number" class="form-control" id="securityCode" required maxlength="3">
+                <div class="invalid-feedback">
+                </div>
+              </div>
+              <div class="col-12">
+                <button class="btn btn-primary" style="float:right" type="submit">Continue</button>
+              </div>
+            </form>
+          </div>
+
+
+          
+      <!-- Billing information  toggling(2 -->
+
+      <div class="billing-div in-active">
+        <br>
+
+        <h4>Billing Information</h4>
+        <form class="row g-3 needs-validation" novalidate onsubmit="billingInfo(event)">
+          <div class="col-md-6">
+            <label for="firstName" class="form-label">First name</label>
+            <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="lastName" class="form-label">Last name</label>
+            <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="billingAddress" class="form-label">Billing Address</label>
+            <div class="address-suggestion">
+              <input type="text" class="form-control" id="billingAddress" placeholder="Billing Address" onkeypress="getLoaction(event)" required>
+              <div  style="width:100%;background-color: white;">
+                <ul id="address-suggestion-value"></ul>
+              </div>
+            </div>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="billingAddress2" class="form-label">Billing Address Line 2</label>
+            <div>
+              <input type="text" class="form-control" id="billingAddress2" placeholder="Billing Address" onkeypress="getLoaction2(event)" required>
+              <div  style="width:100%;background-color: white;">
+                <ul id="address-suggestion-value2"></ul>
+              </div>
+            </div>
+           
+          </div>
+
+          <div class="col-md-6">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" placeholder="City" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="state" class="form-label">Province/State</label>
+            <input type="text" class="form-control" id="state" placeholder="Province" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <!-- <input type="text" class="form-control" id="state" placeholder="Country" required  id="country"> -->
+            <label for="country" class="form-label">Country</label>
+            <select class="form-select" id="country" required>
+              <option selected disabled value="">Choose Country</option>
+              <option value="India">India</option>
+              <option value="Canada">Canada</option>
+              <option value="Australia">Australia</option>
+
+              <option value="USA"> USA</option>
+
+              <option value="Russia"> Russia</option>
+
+              <option value="North Korea">North Korea</option>
+
+              <option value="Europe">Europe</option>
+
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid country.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="zip" class="form-label">Postal Code/ZIP</label>
+            <input type="text" class="form-control" id="zip" placeholder="V1V 1V1 / 12345" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="number" class="form-control" id="phone" placeholder="(250) 555-1234" pattern="[0-9]{10}" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-primary" style="float:right" type="submit">Continue</button>
+          </div>
+
+        </form>
+      </div>
+      
+
+      <!-- Shipping Information -->
+      <div class="shipping-div in-active">
+        <br/>
+
+      <h4>Shipping Information</h4>
+      
+        <input type="checkbox" id="myCheck" onclick="addShippingInfo()">
+        <label for="myCheck">Shipping information is same as my Billing Details</label> 
+
+        <form class="row g-3 needs-validation shipping-details2" novalidate onsubmit="billingInfo2(event)">
+          <div class="col-md-6">
+            <label for="firstName2" class="form-label">First name</label>
+            <input type="text" class="form-control" id="firstName2" placeholder="First Name" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="lastName2" class="form-label">Last name</label>
+            <input type="text" class="form-control" id="lastName2" placeholder="Last Name" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="billingAddress3" class="form-label">Shipping Address</label>
+            <div class="address-suggestion3">
+              <input type="text" class="form-control" id="billingAddress3" placeholder="Billing Address" onkeypress="getLoaction3(event)" required>
+              <div  style="width:100%;background-color: white;">
+                <ul id="address-suggestion-value3"></ul>
+              </div>
+            </div>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="billingAddress4" class="form-label">Shipping Address Line 2</label>
+            <div>
+              <input type="text" class="form-control" id="billingAddress4" placeholder="Billing Address" onkeypress="getLoaction4(event)" required>
+              <div  style="width:100%;background-color: white;">
+                <ul id="address-suggestion-value4"></ul>
+              </div>
+            </div>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="city2" class="form-label">City</label>
+            <input type="text" class="form-control" id="city2" placeholder="City" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="state2" class="form-label">Province/State</label>
+            <input type="text" class="form-control" id="state2" placeholder="Province" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="country2" class="form-label">Country</label>
+            <select class="form-select" id="country2" required>
+              <option selected disabled value="">Choose Country</option>
+              <option value="India">India</option>
+              <option value="Canada">Canada</option>
+              <option value="Australia">Australia</option>
+
+              <option value="USA"> USA</option>
+
+              <option value="Russia"> Russia</option>
+
+              <option value="North Korea">North Korea</option>
+
+              <option value="Europe">Europe</option>
+
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid country.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="zip2" class="form-label">Postal Code/ZIP</label>
+            <input type="number" class="form-control" id="zip2" placeholder="V1V 1V1 / 12345" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+
+          <!-- <div class="col-md-12">
+            <label for="phone2" class="form-label">Phone</label>
+            <input type="number" class="form-control" id="phone2" placeholder="(250) 555-1234" pattern="[0-9]{10}" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div> -->
+
+          <!-- <div class="col-md-12">
+            <label for="email2" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email2" placeholder="name@example.com" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div> -->
+
+          <div class="col-12">
+            <button class="btn btn-primary" style="float:right" type="submit">Continue</button>
+          </div>
+
+        </form>
+        <div class="col-12 shipped">
+          <button class="btn btn-primary" style="float:right;" type="submit" onclick="billingInfo2(event)">Continue</button>
+        </div>
+      </div>
+
+      <!-- Order Confirmation -->
+      
+      <div class="order-div in-active">
+        <br>
+        <h4>Order Details</h4>
+        <div  class="order-modal-details"></div>
+        <div class="col-12">
+          <button class="btn btn-primary" style="float:right" type="submit" onclick="placeOrder()" >Continue</button>
+        </div>
+      </div> 
+
+    </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+  <script src="scripts/home.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+  <script>
+
+    var flag1 = false;
+    var flag2 = false;
+    var flag3 = false;
+    var flag4 = false;
+
+    function placeOrder(){
+   
+      if(flag1!=true){
+        console.log("false");
+        toggling(0);
+
+      }
+      else if(flag2!=true){
+        toggling(1);
+
+      }
+      else if(flag3!=true){
+        toggling(2);
+
+
+      }
+      else{
+        flag1=false;
+        flag2=false;
+        flag3=false;
+        emptyCart();
+        $('#exampleModal2').modal('show')
+      
+      }
+    }
+    function getLoaction(e){
+      fetch(`https://geocoder.ca/?autocomplete=1&auth=test&locate=${e.target.value}&json=1`)
+      .then(response => response.json())
+      .then(result=> {
+        var addressList = document.getElementById("address-suggestion-value");
+        addressList.innerHTML="";
+        if(typeof(result.streets.street)=='string'){
+          addressList.innerHTML+=`<li onclick="resetList('${result.streets.street}')">${result.streets.street}</li>`
+        }
+        if(typeof(result.streets.street)=='object'){
+          for(var i=0;i<result.streets.street.length;i++){
+          addressList.innerHTML+=`<li onclick=" resetList('${result.streets.street[i]}') ">${result.streets.street[i]}</li>`
+        }
+      }
+
+      }).catch(error=>console.log(error));
+    }
+
+    function getLoaction2(e){
+      fetch(`https://geocoder.ca/?autocomplete=1&auth=test&locate=${e.target.value}&json=1`)
+      .then(response => response.json())
+      .then(result=> {
+        var addressList = document.getElementById("address-suggestion-value2");
+        addressList.innerHTML="";
+        if(typeof(result.streets.street)=='string'){
+          addressList.innerHTML+=`<li onclick="resetList2('${result.streets.street}')">${result.streets.street}</li>`
+        }
+        if(typeof(result.streets.street)=='object'){
+          for(var i=0;i<result.streets.street.length;i++){
+          addressList.innerHTML+=`<li onclick=" resetList2('${result.streets.street[i]}') ">${result.streets.street[i]}</li>`
+        }
+      }
+
+      }).catch(error=>console.log(error));
+    }
+
+    function getLoaction3(e){
+      fetch(`https://geocoder.ca/?autocomplete=1&auth=test&locate=${e.target.value}&json=1`)
+      .then(response => response.json())
+      .then(result=> {
+        var addressList = document.getElementById("address-suggestion-value3");
+        addressList.innerHTML="";
+        if(typeof(result.streets.street)=='string'){
+          addressList.innerHTML+=`<li onclick="resetList3('${result.streets.street}')">${result.streets.street}</li>`
+        }
+        if(typeof(result.streets.street)=='object'){
+          for(var i=0;i<result.streets.street.length;i++){
+          addressList.innerHTML+=`<li onclick=" resetList3('${result.streets.street[i]}') ">${result.streets.street[i]}</li>`
+        }
+      }
+
+      }).catch(error=>console.log(error));
+    }
+    function getLoaction4(e){
+      fetch(`https://geocoder.ca/?autocomplete=1&auth=test&locate=${e.target.value}&json=1`)
+      .then(response => response.json())
+      .then(result=> {
+        var addressList = document.getElementById("address-suggestion-value4");
+        addressList.innerHTML="";
+        if(typeof(result.streets.street)=='string'){
+          addressList.innerHTML+=`<li onclick="resetList4('${result.streets.street}')">${result.streets.street}</li>`
+        }
+        if(typeof(result.streets.street)=='object'){
+          for(var i=0;i<result.streets.street.length;i++){
+          addressList.innerHTML+=`<li onclick=" resetList4('${result.streets.street[i]}') ">${result.streets.street[i]}</li>`
+        }
+      }
+
+      }).catch(error=>console.log(error));
+    }
+
+    function resetList4(event){
+      document.getElementById('billingAddress4').value = event;
+      var addressList = document.getElementById("address-suggestion-value4");
+        addressList.innerHTML="";
+    }
+
+    function resetList3(event){
+      document.getElementById('billingAddress3').value = event;
+      var addressList = document.getElementById("address-suggestion-value3");
+        addressList.innerHTML="";
+    }
+
+    function resetList2(event){
+      document.getElementById('billingAddress2').value = event;
+      var addressList = document.getElementById("address-suggestion-value2");
+        addressList.innerHTML="";
+    }
+
+    function resetList(event){
+      document.getElementById('billingAddress').value = event;
+      var addressList = document.getElementById("address-suggestion-value");
+        addressList.innerHTML="";
+    }
+    function paymentMethod(e){
+     
+      e.preventDefault();
+      var cardNumber = document.getElementById('cardNumber').value.toString().trim();
+      var month = document.getElementById('month').value.trim();
+      var year = document.getElementById('year').value.trim();
+      var securityCode = document.getElementById('securityCode').value.toString().trim();
+      
+      if(cardNumber.length==16 && month<=12 && month>0  && year>=2022  && year.toString().length==4 && securityCode.length==3){
+        flag1=true;
+        toggling(1)
+      }
+      else{
+        flag1=false;
+      }
+
+    }
+
+
+    function billingInfo(e){
+      e.preventDefault();
+      var firstName = document.getElementById("firstName").value.trim();
+      var lastName = document.getElementById("lastName").value.trim();
+      var billingAddress = document.getElementById('billingAddress').value.trim();
+      var billingAddress2 = document.getElementById("billingAddress2").value.trim();
+      var city = document.getElementById('city').value.trim();
+      var state = document.getElementById('state').value.trim();
+      var country = document.getElementById('country').value.trim();
+      var zip = document.getElementById('zip').value;
+      var phone = document.getElementById('phone').value;
+      var email = document.getElementById('email').value.trim();
+      if(firstName.length>=1  && lastName.length>=1 && billingAddress.length>=1 && city.length>=1&& state.length>=1 && zip.toString().length>3    && phone.toString().length==10 ){
+        flag2=true;
+        toggling(2);
+      }
+      else{
+        flag2=false;
+      }
+
+    }
+
+    function billingInfo2(e){
+      e.preventDefault();
+
+      var checkBox = document.getElementById("myCheck");
+        var text = document.querySelector(".shipping-details");
+        if (checkBox.checked == true){
+          flag3=true;
+          toggling(3);
+        } 
+        else {
+          
+        
+
+        var firstName = document.getElementById("firstName2").value.trim();
+        var lastName = document.getElementById("lastName2").value.trim();
+        var billingAddress = document.getElementById('billingAddress3').value.trim();
+        var billingAddress2 = document.getElementById("billingAddress4").value.trim();
+        var city = document.getElementById('city2').value.trim();
+        var state = document.getElementById('state2').value.trim();
+        var country = document.getElementById('country2').value.trim();
+        var zip = document.getElementById('zip2').value;
+     
+        if(firstName.length>1  && lastName.length>1 && billingAddress.length>1 && city.length>1&& state.length>1 && zip.toString().length>3   ){
+          flag3=true;
+          toggling(3);
+        }
+        else{
+          flag3=false;
+        }
+      }
+
+    }
+
+    
+    
+
+    function toggling(index){
+      var child = document.getElementById("menu").children;
+      var menuChild = document.getElementById("menu-content").children;
+      for(var i=0;i<child.length;i++){
+        
+        if(i == index){
+          menuChild[i].classList.add("active");
+          menuChild[i].classList.remove("in-active");
+          child[i].classList.remove("text-primary")
+          child[i].classList.add("btn-primary");
+        }
+        else{
+          
+          menuChild[i].classList.add("in-active");
+          menuChild[i].classList.remove("active");
+          child[i].classList.remove("btn-primary");
+          child[i].classList.add("text-primary")
+        }
+      }
+    }
+
+
+    function addShippingInfo(){
+
+        var checkBox = document.getElementById("myCheck");
+        var text = document.querySelector(".shipping-details2");
+        if (checkBox.checked == false){
+
+          text.style.display = "flex";
+          document.querySelector(".shipped").style.display = "none";
+        } else {
+          text.style.display = "none";
+          document.querySelector(".shipped").style.display = "block";
+
+        }
+    }
+
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+
+
+    let cart=document.querySelector(".cart-status");
+    var curr = "cad";
+    let changeFactor = 1;
+
+    orderDetails();
+    function orderDetails(){
+      let order=document.querySelector(".order-modal-details");
+      let items = get_cookie("shoping_cart_items");
+
+      if(items==null){
+      order.innerHTML=""
+      order.innerHTML+=`
+      <p style="text-align:center;margin-top: 20px;">You currently have nothing in your cart</p>
+      `
+    }
+    else{
+      order.innerHTML=""
+      let total=0;
+      order.innerHTML+=`
+            <table class="order-details">
+              <thead>
+                <tr>
+                  <th style="width:380px"> Item </th>
+                  <th> Qty </th>
+                  <th> Price </th>
+                  <th> Total </th>
+      
+                </tr>
+              </thead>
+              <tbody>`+
+                items.items.map(item=>{
+                  total = total+item.Qty * item.price;
+                  return(`<tr>
+                            <td style="word-wrap: break-word;" class="order-item-column" style="text-align:left" > ${item.title} </td>
+                            <td>${item.Qty}</td>
+                            <td>$ ${(item.price * changeFactor).toFixed(2)}</td>
+                            <td>$${(item.Qty * item.price * changeFactor).toFixed(2)}</td>
+                        </tr>`
+                  )
+                }).join("")+
+              `</tbody>
+            </table>
+            <table style="width:100%">
+              <tr style="border-bottom: 1px solid grey; " >
+                <td style="padding:5px";> <b> Subtotal </b> </td>
+                <td style="text-align:right; padding:5px"> $${total} </td>
+              </tr>
+              <tr style="border-bottom: 1px solid grey">
+                <td style="padding:5px";> <b> Shipping </b> </td>
+                <td style="text-align:right; padding:5px" > $ ${items.items.length * 5} </td>
+              </tr>
+              <tr style="border-bottom: 1px solid grey">
+                <td style="padding:5px";> <b> Tax </b> </td>
+                <td style="text-align:right; padding:5px" > $ ${items.items.length * 8.34} </td>
+              </tr>
+              <tr style="border-bottom: 1px solid grey">
+                <td style="padding:5px";> <b> Order Total </b> </td>
+                <td style="text-align:right; padding:5px" > $ ${(total+15.00+16.86).toFixed(2)} </td>
+              </tr>
+            </table>
+            <br/>
+      `
+    }
+    }
+    
+
+
+
+
+    async function changeCurrency(){
+      let nextCurr = document.getElementById("currency").value;
+      if(nextCurr!=''){
+
+      
+      let currResult = {};
+      await fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${curr}/${nextCurr}.min.json`)
+      .then(response => response.json())
+      .then(result=> {
+        changeFactor= nextCurr==="usd"?result.usd:nextCurr==="bzd"?result.bzd:result.cad
+        curr=  nextCurr
+        }).catch(error=>console.log(error));
+        
+        newData();
+      }
+    }
+
+    function newData(){
+      let items = get_cookie("shoping_cart_items");
+    if(items==null){
+      cart.innerHTML=""
+      cart.innerHTML+=`
+      <p style="text-align:center;margin-top: 20px;">You currently have nothing in your cart</p>
+      `
+    }
+    else{
+      for(var i=0;i<items.items.length;i++){
+        items.items[i].price = items.items[i].price*changeFactor;
+      }
+      set_cookie("shoping_cart_items", items);
+
+      cart.innerHTML=""
+      let total=0;
+      cart.innerHTML+=`
+            <table class="order-details">
+              <thead>
+                <tr>
+                  <th style="width:140px"> Item </th>
+                  <th> Qty </th>
+                  <th> Price </th>
+                  <th> Total </th>
+      
+                </tr>
+              </thead>
+              <tbody>`+
+                items.items.map(item=>{
+                  total = total+item.Qty * item.price;
+                  return(`<tr>
+                            <td style="word-wrap: break-word;" class="item-column">
+                              <div class="inner-trash"><i class="fa fa-solid fa-trash" onclick="trash('${item.id}', '${item.title}')"></i></div>
+                              <div class="inner-title">${item.title}</div>
+                            </td>
+                            <td>${item.Qty}</td>
+                            <td>$ ${(item.price).toFixed(2)}</td>
+                            <td>$${(item.Qty * item.price).toFixed(2)}</td>
+                        </tr>`
+                  )
+                }).join("")+
+              `</tbody>
+            </table>
+            <div style="margin-top:10px;">
+              <label>Subtotal</label>
+              <input type="text" style="float: right;text-align: right;background-color: #ffff;outline: none;border: none;" value="$ ${(total * changeFactor).toFixed(2)}" disabled/>
+    
+            </div>
+            <div style="margin-top:10px;">
+              <button class="btn btn-warning" onclick="emptyCart()">Empty Cart</button>
+              <button class="btn btn-success" style="float:right"  data-bs-toggle="modal" data-bs-target="#exampleModal">Checkout</button>
+            </div>
+      `
+
+            for(var i=0; i<data.length;i++){
+               data[i].price =  (data[i].price * changeFactor).toFixed(2);
+            }
+            showData() ;
+      }
+    }
+
+  getData();
+  let data={};
+  async function getData(){
+      await fetch('https://fakestoreapi.com/products')
+    .then(response => response.json())
+    .then(result=> { 
+        data=result
+        showData() 
+      }).catch(error=>console.log(error));
+  }
+
+function showData(){
+    let output=document.querySelector(".products-div");
+    output.innerHTML=""
+    data.map(product=>{
+        output.innerHTML+=`
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card" >
+                <div class="card-image">
+                    <img src="${product.image}" class="card-img-top" alt="...">
+                </div>
+                
+                <div class="card-body">
+                <h5 class="card-title">${product.title}</h5>
+                <p class="card-text">${product.description}</p>
+                <span style="font-size: 25px;">$ ${product.price}</span><button class="btn btn-success" style="float: right;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onclick="addCart('${product.id}', '${product.title}', ${product.price} )"> Add To Cart</button>
+
+                </div>
+            </div>
+          </div>
+            `
+    })
+}
+
+async function viewCart(){
+  await showCart();
+}
+
+
+async function addCart(id, title, price){
+
+    let flag = false;
+    let cart = await get_cookie("shoping_cart_items");
+    if(cart==null){
+      let item = { items:[ ] }
+      addNew(id, title, price, item);
+      flag=true;
+    }
+    else{
+      cart.items.forEach(function (item, index) {
+        if(title===item.title){
+          item.Qty+=1;
+          insertItem(cart);
+          flag = true;
+        }
+      });
+    }  
+
+      if(!flag){
+        addNew(id, title, price, cart)
+      }
+     
+
+
+
+
+    // var item = {"id":"10",
+    //               "title":"Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+    //               "Qty":123,
+    //               "price":10934,
+    //             }
+    // let items = await get_cookie("shoping_cart_items");
+    // items.items.push(item);
+    // set_cookie("shoping_cart_items", items);
+
+
+    showCart();
+    // document.getElementById("outer-sidebar").style.visibility = "visible";
+    // document.getElementById("mySidenav").style.width = "350px";
+}
+
+function addNew(id, title, price, cart){
+  let item = { "id":id,"title":title, "Qty":1,"price":price}
+      cart.items.push(item);
+      insertItem(cart);
+}
+
+function insertItem(cart){
+  set_cookie("shoping_cart_items", cart);
+  return ;
+}
+
+function showCart(){
+      let items = get_cookie("shoping_cart_items");
+
+
+    if(items==null){
+      cart.innerHTML=""
+      cart.innerHTML+=`
+      <p style="text-align:center;margin-top: 20px;">You currently have nothing in your cart</p>
+      `
+    }
+    else{
+      cart.innerHTML=""
+      let total=0;
+      cart.innerHTML+=`
+            <table class="order-details">
+              <thead>
+                <tr>
+                  <th style="width:140px"> Item </th>
+                  <th> Qty </th>
+                  <th> Price </th>
+                  <th> Total </th>
+      
+                </tr>
+              </thead>
+              <tbody>`+
+                items.items.map(item=>{
+                  total = total+item.Qty * item.price;
+                  return(`<tr>
+                            <td style="word-wrap: break-word;" class="item-column">
+                              <div class="inner-trash"><i class="fa fa-solid fa-trash" onclick="trash('${item.id}', '${item.title}')"></i></div>
+                              <div class="inner-title">${item.title}</div>
+                            </td>
+                            <td>${item.Qty}</td>
+                            <td>$ ${(item.price).toFixed(2)}</td>
+                            <td>$${(item.Qty * item.price).toFixed(2)}</td>
+                        </tr>`
+                  )
+                }).join("")+
+              `</tbody>
+            </table>
+            <div style="margin-top:10px;">
+              <label>Subtotal</label>
+              <input type="text" style="float: right;text-align: right;background-color: #ffff;outline: none;border: none;" value="$ ${(total).toFixed(2)}" disabled/>
+    
+            </div>
+            <div style="margin-top:10px;">
+              <button class="btn btn-warning" onclick="emptyCart()">Empty Cart</button>
+              <button class="btn btn-success" style="float:right" data-bs-toggle="modal" data-bs-target="#exampleModal" >Checkout</button>
+            </div>
+      `
+    }
+  }
+
+  async function emptyCart(){
+    let item = { items:[ ] }
+    insertItem(item);
+    showCart();
+
+  }
+
+  async function trash(id, title){
+  let cart = await get_cookie("shoping_cart_items");
+
+  cart.items.forEach(function(item, index, object) {
+    if (item.title=== title) {
+      object.splice(index, 1);
+    }
+  });
+
+  insertItem(cart);
+  showCart();
+}
+
+
+
+  </script>
+</body>
+</html>
